@@ -20,6 +20,9 @@ y1(1:length(n_y)) = 0;
 y2(1:length(n_y)) = 0;
 y3(1:length(n_y)) = 0;
 
+
+
+
 for n = 0: length(n_y) - 1
     for k = 0: length(n_x) - 1
 
@@ -58,6 +61,16 @@ title('x3[n] f = 0.20 sample^-1'); xlabel('n(sample)'); ylabel('Amplitude');
 subplot(2,1,2);
 stem(n_y, y3, 'filled'); grid on;
 title('y3[n] = x3*h'); xlabel('n(sample)'); ylabel('Amplitude');
+
+%find peak to peak
+range_data_FIR = 40:80;
+peak_to_peak_y1 = max(y1(range_data_FIR)) - min(y1(range_data_FIR));
+peak_to_peak_y2 = max(y2(range_data_FIR)) - min(y2(range_data_FIR));
+peak_to_peak_y3 = max(y3(range_data_FIR)) - min(y3(range_data_FIR));
+fprintf('Peak-to-Peak :\n');
+fprintf('Peak-to-Peak y1 = %.6f\n', peak_to_peak_y1);
+fprintf('Peak-to-Peak y2 = %.6f\n', peak_to_peak_y2);
+fprintf('Peak-to-Peak y3 = %.6f\n', peak_to_peak_y3);
 
 %IIR
 % y[n] = 1.5y[n-1] - 0.85y[n-2] + x[n]
@@ -107,11 +120,12 @@ subplot(2,1,2);
 stem(n_de, y6, 'filled'); grid on;
 title('y4[n]'); xlabel('n(sample)'); ylabel('Amplitude');
 
-
-
-
-
-
-
-
-
+%find peak to peak
+range_data_IIR = 80:100;
+peak_to_peak_y4 = max(y4(range_data_IIR)) - min(y4(range_data_IIR));
+peak_to_peak_y5 = max(y5(range_data_IIR)) - min(y5(range_data_IIR));
+peak_to_peak_y6 = max(y6(range_data_IIR)) - min(y6(range_data_IIR));
+fprintf('Peak-to-Peak :\n');
+fprintf('Peak-to-Peak y4 = %.6f\n', peak_to_peak_y4);
+fprintf('Peak-to-Peak y5 = %.6f\n', peak_to_peak_y5);
+fprintf('Peak-to-Peak y6 = %.6f\n', peak_to_peak_y6);
