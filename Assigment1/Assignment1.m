@@ -26,12 +26,15 @@ y3(1:length(n_y)) = 0;
 for n = 0: length(n_y) - 1
     for k = 0: length(n_x) - 1
 
-        if (n-k >= 0) && (n-k < length(n_h))
+        if n-k >= 0 && n-k < length(n_h)
+            %     y1(n+1) = y1(n+1) + x1(k+1)*hn(n-k+1);
+            %     y2(n+1) = y2(n+1) + x2(k+1)*hn(n-k+1);
+            %     y3(n+1) = y3(n+1) + x3(k+1)*hn(n-k+1);
+
             y1(n+1) = y1(n+1) + x1(k+1)*hn(n-k+1);
             y2(n+1) = y2(n+1) + x2(k+1)*hn(n-k+1);
             y3(n+1) = y3(n+1) + x3(k+1)*hn(n-k+1);
         end
-
     end
 end
 
@@ -99,7 +102,7 @@ subplot(2,1,1)
 stem(n_x, x1, 'filled'); grid on;
 title('x1[n] f = 0.05 sample^-1'); xlabel('n(sample)'); ylabel('Amplitude');
 subplot(2,1,2);
-stem(n_de, y4, 'filled'); grid on;
+stem(n_x, y4(3:end), 'filled'); grid on;
 title('y4[n]'); xlabel('n(sample)'); ylabel('Amplitude');
 
 figure(5);
@@ -108,7 +111,7 @@ subplot(2,1,1)
 stem(n_x, x2, 'filled'); grid on;
 title('x2[n] f = 0.10 sample^-1'); xlabel('n(sample)'); ylabel('Amplitude');
 subplot(2,1,2);
-stem(n_de, y5, 'filled'); grid on;
+stem(n_x, y5(3:end), 'filled'); grid on;
 title('y4[n]'); xlabel('n(sample)'); ylabel('Amplitude');
 
 figure(6);
@@ -117,7 +120,7 @@ subplot(2,1,1)
 stem(n_x, x3, 'filled'); grid on;
 title('x3[n] f = 0.20 sample^-1'); xlabel('n(sample)'); ylabel('Amplitude');
 subplot(2,1,2);
-stem(n_de, y6, 'filled'); grid on;
+stem(n_x, y6(3:end), 'filled'); grid on;
 title('y4[n]'); xlabel('n(sample)'); ylabel('Amplitude');
 
 %find peak to peak
