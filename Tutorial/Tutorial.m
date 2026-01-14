@@ -199,3 +199,5 @@ subplot(3,1,3);
 n3y = 0:Ny3-1;
 stem(n3y, y3, 'filled'); grid on;
 
+
+
