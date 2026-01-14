@@ -1,4 +1,4 @@
-%% continuous
+continuous
 clear; clc; close all;
 t = linspace(0,0.1,1001);
 
@@ -38,7 +38,7 @@ ylabel('Amp.')
 title('Sin')
 grid on
 
-%% discreate
+discreate
 samp= 1000;
 
 n1 = 0:399;
@@ -78,13 +78,14 @@ ylabel('Amp.')
 title('Sin')
 grid on
 
-%% Digital filter
+Digital filter
 % make low pass filter : w0 = 0 rad/sample.
 % low pass filter sinc func. : hd[n] = sinc(nwc)/(n*pi)
 % for make other  hd[n] = (sinc(nwc)/(n*pi)) * cos(nw0)
 % not calculate only n = 0 , we just use l'hospital rule. hd[n=0] = wc/pi
 % look at angular freq.
 % w1 = 2*pi*f1 , w2 = 2*pi*f2 , w3 = 2*pi*f3
+% wc = 2 * pi * (f0/fs)
 
 w1 = 2*pi*f1;
 w2 = 2*pi*f2;
@@ -144,7 +145,8 @@ subplot(2,1,2);
 plot(w, abs(Hd), 'LineWidth', 1.2); grid on;
 title('LPF Mag');
 
-%% convolution
+convolution
+% band pass x2t 
 y1 = 0;
 y2 = 0;
 y3 = 0;
@@ -190,14 +192,103 @@ figure(5);
 subplot(3,1,1);
 n1y = 0:Ny1-1;
 stem(n1y, y1, 'filled'); grid on;
+title("y1");
 
 subplot(3,1,2);
 n2y = 0:Ny2-1;
 stem(n2y, y2, 'filled'); grid on;
+title("y2");
 
 subplot(3,1,3);
 n3y = 0:Ny3-1;
 stem(n3y, y3, 'filled'); grid on;
+title("y3");
 
+% BRF
+fs = samp;                 
+w1 = 2*pi*(Freq1/fs);     
+w2 = 2*pi*(Freq2/fs);      
+w3 = 2*pi*(Freq3/fs);      
 
+w_stop1 = 2*pi*(37.5/samp);           
+w_stop2 = 2*pi*(75/samp);            
 
+M  = 20;
+L  = 2*M + 1;
+n  = -M:M;
+
+hLP1 = zeros(1,L);
+hLP2 = zeros(1,L);
+
+for i = 1:L
+    if n(i) == 0
+        hLP1(i) = w_stop1/pi;
+        hLP2(i) = w_stop2/pi;
+    else
+        hLP1(i) = sin(w_stop1*n(i)) / (pi*n(i));
+        hLP2(i) = sin(w_stop2*n(i)) / (pi*n(i));
+    end
+end
+
+hBP = hLP2 - hLP1;
+
+delta = zeros(1,L);
+delta(M+1) = 1;
+
+hBR = delta - hBP;
+
+w = linspace(0, pi, 1001);
+HBR = 0;
+for i = 1:L
+    HBR = HBR + hBR(i) * exp(-1i*w*n(i));
+end
+
+figure(6);
+subplot(2,1,1);
+stem(n, hBR); grid on;
+
+subplot(2,1,2);
+plot(w, abs(HBR), 'LineWidth', 1.2); grid on;
+y1 = 0; y2 = 0; y3 = 0;
+
+Nx1 = length(x1n);
+Nx2 = length(x2n);
+Nx3 = length(x3n);
+Nh  = length(hBR);        
+
+Ny1 = Nx1 + Nh - 1;
+Ny2 = Nx2 + Nh - 1;
+Ny3 = Nx3 + Nh - 1;
+
+y1 = zeros(1, Ny1);
+y2 = zeros(1, Ny2);
+y3 = zeros(1, Ny3);
+
+for nn = 0:Ny1-1
+    for k = 0:Nh-1
+        if (nn-k >= 0) && (nn-k < Nx1)
+            y1(nn+1) = y1(nn+1) + x1n(nn-k+1)*hBR(k+1);
+        end
+    end
+end
+
+for nn = 0:Ny2-1
+    for k = 0:Nh-1
+        if (nn-k >= 0) && (nn-k < Nx2)
+            y2(nn+1) = y2(nn+1) + x2n(nn-k+1)*hBR(k+1);
+        end
+    end
+end
+
+for nn = 0:Ny3-1
+    for k = 0:Nh-1
+        if (nn-k >= 0) && (nn-k < Nx3)
+            y3(nn+1) = y3(nn+1) + x3n(nn-k+1)*hBR(k+1);
+        end
+    end
+end
+
+figure;
+subplot(3,1,1); stem(0:Ny1-1, y1, 'filled'); grid on; title('y1');
+subplot(3,1,2); stem(0:Ny2-1, y2, 'filled'); grid on; title('y2');
+subplot(3,1,3); stem(0:Ny3-1, y3, 'filled'); grid on; title('y3');
